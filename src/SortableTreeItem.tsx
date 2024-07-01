@@ -29,6 +29,8 @@ export interface TreeItemProps<T> extends HTMLAttributes<HTMLLIElement> {
   onRemove?(id: UniqueIdentifier): void;
 
   wrapperRef?(node: HTMLLIElement): void;
+
+  onAction?(key?: string, item?: TreeItem<T>): void;
 }
 
 const animateLayoutChanges: AnimateLayoutChanges = ({
@@ -96,6 +98,13 @@ const SortableTreeItemNotMemoized = function SortableTreeItem<
 
     return () => props.onRemove?.(props.item.id);
   }, [props.item.id, props.onRemove]);
+
+  const onAction = useMemo(() => {
+    if (!props.onAction) return undefined;
+
+    return (key: string) => props.onAction?.(key, props.item);
+  }, [props.item, props.onAction]);
+
   return (
     <TreeItemComponent
       {...props}
@@ -117,6 +126,7 @@ const SortableTreeItemNotMemoized = function SortableTreeItem<
       disableSorting={disableSorting}
       isOver={isOver}
       isOverParent={isOverParent}
+      onAction={onAction}
     />
   );
 };

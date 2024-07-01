@@ -63,6 +63,7 @@ export type SortableTreeProps<
     items: TreeItems<TData>,
     reason: ItemChangedReason<TData>
   ): void;
+  onAction?(key?: string, item?: FlattenedItem<TData>): void;
   TreeItemComponent: TreeItemComponentType<TData, TElement>;
   indentationWidth?: number;
   indicator?: boolean;
@@ -111,6 +112,7 @@ export function SortableTree<
   indicator,
   indentationWidth = 20,
   onItemsChanged,
+  onAction,
   TreeItemComponent,
   pointerSensorOptions,
   disableSorting,
@@ -197,6 +199,15 @@ export function SortableTree<
     [onItemsChanged]
   );
 
+  const handleAction = useCallback(
+    (key: string | undefined, item: FlattenedItem<TreeItemData>) => {
+      if (onAction) {
+        onAction(key, item);
+      }
+    },
+    [onAction]
+  );
+
   const handleCollapse = useCallback(
     function handleCollapse(id: string) {
       const item = findItemDeep(itemsRef.current, id)!;
@@ -277,6 +288,7 @@ export function SortableTree<
               collapsed={Boolean(item.collapsed && item.children?.length)}
               onCollapse={item.children?.length ? handleCollapse : undefined}
               onRemove={handleRemove}
+              onAction={handleAction}
               isLast={
                 item.id === activeId && projected
                   ? projected.isLast
@@ -309,6 +321,7 @@ export function SortableTree<
                 children={[]}
                 depth={activeItem.depth}
                 clone
+                indicator={indicator}
                 childCount={getChildCount(items, activeId) + 1}
                 indentationWidth={indentationWidth}
                 isLast={false}

@@ -136,6 +136,7 @@ export type TreeItemComponentProps<T = {}> = {
   onCollapse?(): void;
   onRemove?(): void;
   wrapperRef?(node: HTMLLIElement): void;
+  onAction?(key?: string, item?: TreeItem<T>): void;
 };
 export type TreeItemComponentType<T, TElement extends HTMLElement> = React.FC<
   React.PropsWithChildren<TreeItemComponentProps<T> & RefAttributes<TElement>>
